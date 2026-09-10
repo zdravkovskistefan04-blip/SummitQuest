@@ -1,0 +1,23 @@
+# Old duplicate copy
+/SummitQuest_COMPLETE/
+
+# Frontend
+node_modules/
+dist/
+
+# Backend
+.vs/
+bin/
+obj/
+
+# IDE
+.vscode/
+.idea/
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
