@@ -25,10 +25,13 @@
       </button>
 
       <p v-if="message" class="muted">{{ message }}</p>
+      <p v-if="error" class="muted">{{ error }}</p>
 
     </section>
 
     <!-- REPORT LIST -->
+    <p v-if="!reports.length && !error" class="muted">Сè уште нема пријави.</p>
+
     <article
         v-for="report in reports"
         :key="report.id"
@@ -45,25 +48,28 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import api from '../services/api'
+import { loadData } from '../services/storage'
 
 const reports = ref([])
 const problemType = ref('Trash')
 const description = ref('')
 const message = ref('')
+const error = ref('')
+const currentUser = loadData('altigoUser', null)
 
 async function loadReports() {
   try {
     const response = await api.get('/eco-reports')
     reports.value = response.data
   } catch (err) {
-    console.log(err)
+    error.value = 'Извештаите моментално не се достапни. Обиди се повторно подоцна.'
   }
 }
 
 async function submitReport() {
   try {
     const response = await api.post('/eco-reports', {
-      userId: 1,
+      userId: currentUser?.id || currentUser?.email,
       trailId: 1,
       problemType: problemType.value,
       description: description.value || 'Problem reported on trail.'
@@ -75,7 +81,7 @@ async function submitReport() {
     await loadReports()
 
   } catch (err) {
-    console.log(err)
+    error.value = 'Пријавата не може да се испрати. Провери ја конекцијата и обиди се повторно.'
   }
 }
 

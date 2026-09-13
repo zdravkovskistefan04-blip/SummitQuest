@@ -9,6 +9,8 @@
     <p class="muted">
       Suggested hiking partners with similar pace and trail interests.
     </p>
+    <p v-if="error" class="muted">{{ error }}</p>
+    <p v-else-if="!matches.length" class="muted">Нема достапни предлози во моментов.</p>
 
     <article
         v-for="person in matches"
@@ -37,15 +39,20 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import api from '../services/api'
+import { loadData } from '../services/storage'
 
 const matches = ref([])
+const error = ref('')
+const user = loadData('altigoUser', null)
 
 onMounted(async () => {
   try {
-    const response = await api.get('/community/matches?userId=1')
+    const response = await api.get('/community/matches', {
+      params: { userId: user?.id || user?.email }
+    })
     matches.value = response.data
   } catch (err) {
-    console.log(err)
+    error.value = 'Предлозите за партнери моментално не се достапни.'
   }
 })
 </script>

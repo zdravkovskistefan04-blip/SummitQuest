@@ -101,6 +101,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { logoutUser, registerUser } from '../services/storage'
 
 const router = useRouter()
 const name = ref('')
@@ -122,14 +123,17 @@ function onSignup() {
     return
   }
 
-  // Зачувување на корисникот во LocalStorage
-  const newUser = {
+  logoutUser()
+  const result = registerUser({
     name: name.value,
     email: email.value,
     password: password.value
-  }
+  })
 
-  localStorage.setItem('altigoUser', JSON.stringify(newUser))
+  if (result.error === 'exists') {
+    alert('Овој е-пошта веќе има профил. Најави се наместо да креираш нов профил.')
+    return
+  }
 
   alert('Успешна регистрација! Сега можете да се најавите.');
   router.push('/login')

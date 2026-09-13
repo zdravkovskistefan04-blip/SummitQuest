@@ -62,7 +62,7 @@
 
           <p class="signup-text">
             Немаш профил?
-            <RouterLink to="/Signup" class="signup-link">
+            <RouterLink to="/signup" class="signup-link">
               Креирај нов профил
             </RouterLink>
           </p>
@@ -75,6 +75,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { authenticateUser } from '../services/storage'
 
 const router = useRouter()
 const email = ref('')
@@ -82,14 +83,9 @@ const password = ref('')
 const showPassword = ref(false)
 
 function onLogin() {
-  const savedUser = JSON.parse(localStorage.getItem('altigoUser'))
-
-  if (
-      (email.value === 'leontina@finki.ukim.mk' && password.value === 'finki123') ||
-      (savedUser && email.value === savedUser.email && password.value === savedUser.password)
-  ) {
+  if (authenticateUser(email.value, password.value)) {
     alert('Успешна најава! Добредојдовте на Altigo.')
-    router.push('/Home')
+    router.push('/home')
   } else {
     alert('Грешна е-пошта или лозинка. Обидете се повторно.')
   }

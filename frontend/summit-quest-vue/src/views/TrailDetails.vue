@@ -39,7 +39,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { loadData, saveData } from '../services/storage'
+import { loadData, removeData, saveData } from '../services/storage'
 
 const route = useRoute()
 const trails = loadData('allTrails', [])
@@ -69,7 +69,7 @@ const completeTrail = () => {
     saveData('completedTrails', completed)
   }
 
-  localStorage.removeItem('activeTrail')
+  removeData('activeTrail')
   isActive.value = false
   alert('Патеката е завршена!')
 }

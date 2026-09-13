@@ -20,11 +20,9 @@
 import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { loadData } from '../services/storage'
-import profilePhoto from '../img/profile-photo.jpg'
 
 const route = useRoute()
-const profile = ref(loadData('altigoUser', { name: 'Stefan Zdravkovski', avatar: profilePhoto }))
-if (!profile.value.avatar) profile.value.avatar = profilePhoto
+const profile = ref(loadData('altigoUser', { name: 'Планинар', avatar: '' }))
 
 const initials = computed(() => {
   const name = profile.value.name?.trim() || 'Планинар'
@@ -37,14 +35,17 @@ const initials = computed(() => {
 })
 
 const refreshProfile = () => {
-  profile.value = loadData('altigoUser', { name: 'Stefan Zdravkovski', avatar: profilePhoto })
-  if (!profile.value.avatar) profile.value.avatar = profilePhoto
+  profile.value = loadData('altigoUser', { name: 'Планинар', avatar: '' })
 }
 
 watch(() => route.fullPath, refreshProfile)
 
 onMounted(() => window.addEventListener('altigo-profile-updated', refreshProfile))
-onUnmounted(() => window.removeEventListener('altigo-profile-updated', refreshProfile))
+onMounted(() => window.addEventListener('altigo-session-changed', refreshProfile))
+onUnmounted(() => {
+  window.removeEventListener('altigo-profile-updated', refreshProfile)
+  window.removeEventListener('altigo-session-changed', refreshProfile)
+})
 </script>
 
 <style scoped>

@@ -2,6 +2,7 @@
   <section class="screen achievements-bg achievements-page">
 
     <h1>Achievements</h1>
+    <p v-if="error" class="muted">Достигнувањата моментално не се достапни. Обиди се повторно подоцна.</p>
 
     <!-- FEATURED BADGE -->
     <section class="main-badge glass">
@@ -31,13 +32,14 @@ import { onMounted, ref } from 'vue'
 import api from '../services/api'
 
 const achievements = ref([])
+const error = ref('')
 
 onMounted(async () => {
   try {
     const response = await api.get('/achievements')
     achievements.value = response.data
   } catch (err) {
-    console.log(err)
+    error.value = 'Достигнувањата моментално не се достапни. Обиди се повторно подоцна.'
   }
 })
 </script>

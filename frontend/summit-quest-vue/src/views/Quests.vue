@@ -2,6 +2,8 @@
   <section class="screen achievements-bg quests-page">
 
     <h1>Daily Quests</h1>
+    <p v-if="error" class="muted">Предизвиците моментално не се достапни. Обиди се повторно подоцна.</p>
+    <p v-else-if="!quests.length" class="muted">Сè уште нема достапни дневни предизвици.</p>
 
     <article
         v-for="quest in quests"
@@ -43,13 +45,14 @@ import { onMounted, ref } from 'vue'
 import api from '../services/api'
 
 const quests = ref([])
+const error = ref('')
 
 async function loadQuests() {
   try {
     const response = await api.get('/quests/daily')
     quests.value = response.data
   } catch (err) {
-    console.log(err)
+    error.value = 'Предизвиците моментално не се достапни. Обиди се повторно подоцна.'
   }
 }
 
@@ -58,7 +61,7 @@ async function completeQuest(id) {
     await api.post(`/quests/${id}/complete`)
     await loadQuests()
   } catch (err) {
-    console.log(err)
+    error.value = 'Предизвикот не може да се заврши. Обиди се повторно.'
   }
 }
 

@@ -74,7 +74,7 @@
 
               <div class="input-group">
                 <label>Е-пошта:</label>
-                <input v-model="form.email" placeholder="Внеси е-пошта..." class="styled-input" />
+                <input v-model="form.email" type="email" class="styled-input" readonly />
               </div>
 
               <div class="input-group">
@@ -172,9 +172,8 @@
 <script setup>
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { loadData, saveData } from '../services/storage'
+import { createDefaultUser, loadData, logoutUser, saveData } from '../services/storage'
 import { calculateTrailStats } from '../services/trailStats'
-import profilePhoto from '../img/profile-photo.jpg'
 
 const router = useRouter()
 const currentPage = ref('profile')
@@ -187,18 +186,7 @@ const menuItems = [
   { id: 'profile', label: 'Профил', icon: '👤' }
 ]
 
-const savedUser = JSON.parse(localStorage.getItem('altigoUser'))
-
-// Почетни вредности прилагодени со твојот профил
-const user = ref({
-  name: savedUser?.name || 'Leontina',
-  email: savedUser?.email || 'leontina@finki.ukim.mk',
-  age: savedUser?.age || 25,
-  bio: savedUser?.bio || 'Страствен планинар и заљубеник во природни убавини.',
-  avatar: savedUser?.avatar || profilePhoto,
-  postsShared: savedUser?.postsShared || 8,
-  likesReceived: savedUser?.likesReceived || 124
-})
+const user = ref(loadData('altigoUser', createDefaultUser()))
 
 const form = ref({ ...user.value })
 const isEditing = ref(false)
@@ -219,8 +207,8 @@ const handleImageError = (event) => {
 
 const logout = () => {
   if (confirm('Дали си сигурна дека сакаш да се одјавиш?')) {
-    localStorage.removeItem('isLoggedIn')
-    router.push('/login')
+    logoutUser()
+    router.replace('/login')
   }
 }
 
@@ -237,8 +225,7 @@ const cancelEdit = () => {
 
 const saveProfile = () => {
   user.value = { ...user.value, ...form.value }
-  localStorage.setItem('altigoUser', JSON.stringify(user.value))
-  window.dispatchEvent(new Event('altigo-profile-updated'))
+  saveData('altigoUser', user.value)
   isEditing.value = false
   alert('Профилот е успешно ажуриран!')
 }

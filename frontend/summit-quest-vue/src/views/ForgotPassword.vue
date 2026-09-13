@@ -48,15 +48,13 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { hasUser } from '../services/storage'
 
 const router = useRouter()
 const email = ref('')
 
 function onReset() {
-  const savedUser = JSON.parse(localStorage.getItem('altigoUser'))
-
-  // Проверка за тест профилот или за зачуваниот
-  if (email.value === 'leontina@finki.ukim.mk' || (savedUser && email.value === savedUser.email)) {
+  if (hasUser(email.value)) {
     alert(`Успешно! Испратен е линк за ресетирање на лозинката на: ${email.value}`)
     router.push('/login')
   } else {

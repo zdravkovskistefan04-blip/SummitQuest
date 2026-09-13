@@ -10,6 +10,7 @@
 
       <span aria-hidden="true"></span>
     </header>
+    <p v-if="error" class="muted">{{ error }}</p>
 
     <!-- MAP -->
     <TrailMap
@@ -80,13 +81,14 @@ const started = ref(false)
 const finished = ref(false)
 const progress = ref(0)
 const result = ref(null)
+const error = ref('')
 
 onMounted(async () => {
   try {
     const response = await api.get(`/trails/${route.params.id}`)
     trail.value = response.data
   } catch (err) {
-    console.log(err)
+    error.value = 'Патеката не може да се вчита. Обиди се повторно подоцна.'
   }
 })
 
@@ -105,7 +107,7 @@ async function toggleTrek() {
     finished.value = true
     progress.value = 100
   } catch (err) {
-    console.log(err)
+    error.value = 'Акцијата не може да се заврши. Провери ја конекцијата и обиди се повторно.'
   }
 }
 </script>

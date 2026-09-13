@@ -1437,7 +1437,7 @@ function formatArrivalTime(distance, mode) {
 }
 
 const goBack = () => {
-  router.push(route.query.from === 'explore' ? { name: 'Explore' } : { name: 'Trails' })
+  router.push({ name: 'Explore' })
 }
 
 const planCustomRoute = () => {
@@ -2961,7 +2961,7 @@ onBeforeUnmount(() => {
 })
 
 const goBack = () => {
-  router.push('/trails')
+  router.push({ name: 'Explore' })
 }
 
 const planCustomRoute = () => {

@@ -20,6 +20,7 @@ import Home from '../views/Home.vue'
 import Explore from '../views/Explore.vue'
 import Social from "../views/Social.vue";
 import ForgotPassword from "../views/ForgotPassword.vue";
+import { getCurrentUser } from '../services/storage'
 
 const routes = [
   { path: '/', redirect: '/login' },
@@ -56,6 +57,11 @@ const routes = [
 const router = createRouter({
   history: createWebHistory(),
   routes
+})
+
+router.beforeEach((to) => {
+  const publicRoutes = new Set(['Login', 'Signup', 'ForgotPassword'])
+  if (!publicRoutes.has(to.name) && !getCurrentUser()) return { name: 'Login' }
 })
 
 export default router

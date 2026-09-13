@@ -29,6 +29,7 @@
         Post
       </button>
     </div>
+    <p v-if="error" class="muted">{{ error }}</p>
 
     <!-- REVIEWS -->
     <article
@@ -54,6 +55,7 @@
 <script setup>
 import { onMounted, ref, watch } from 'vue'
 import api from '../services/api'
+import { loadData as loadStoredData } from '../services/storage'
 
 const props = defineProps({
   trailId: { type: Number, required: true }
@@ -63,6 +65,8 @@ const tags = ref([])
 const selectedTags = ref([])
 const reviews = ref([])
 const comment = ref('')
+const error = ref('')
+const user = loadStoredData('altigoUser', null)
 
 async function loadData() {
   try {
@@ -74,7 +78,7 @@ async function loadData() {
     tags.value = tagResponse.data
     reviews.value = reviewResponse.data
   } catch (err) {
-    console.log(err)
+    error.value = 'Рецензиите моментално не се достапни.'
   }
 }
 
@@ -91,7 +95,7 @@ async function submitReview() {
     const response = await api.post(
         `/trails/${props.trailId}/reviews`,
         {
-          userName: 'Guest Hiker',
+          userName: user?.name || 'Планинар',
           rating: 5,
           comment: comment.value || 'Quick vibe-check review',
           tags: selectedTags.value
@@ -102,7 +106,7 @@ async function submitReview() {
     comment.value = ''
     selectedTags.value = []
   } catch (err) {
-    console.log(err)
+    error.value = 'Рецензијата не може да се објави. Обиди се повторно.'
   }
 }
 
